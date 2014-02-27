@@ -1,0 +1,68 @@
+diff -rc nginx-1.4.5/auto/make nginx-1.4.5-cpp/auto/make
+*** nginx-1.4.5/auto/make	2014-02-11 21:24:44.000000000 +0800
+--- nginx-1.4.5-cpp/auto/make	2014-02-27 13:56:05.127350300 +0800
+***************
+*** 21,28 ****
+  
+  CC =	$CC
+  CFLAGS = $CFLAGS
+! CPP =	$CPP
+! LINK =	$LINK
+  
+  END
+  
+--- 21,28 ----
+  
+  CC =	$CC
+  CFLAGS = $CFLAGS
+! CPP =	g++
+! LINK =	g++ 
+  
+  END
+  
+***************
+*** 337,342 ****
+--- 337,343 ----
+  if test -n "$NGX_ADDON_SRCS"; then
+  
+      ngx_cc="\$(CC) $ngx_compile_opt \$(CFLAGS) $ngx_use_pch \$(ALL_INCS)"
++     ngx_cpp="\$(CPP) $ngx_compile_opt \$(CFLAGS) $ngx_use_pch \$(ALL_INCS)"
+  
+      for ngx_src in $NGX_ADDON_SRCS
+      do
+***************
+*** 353,364 ****
+  
+          ngx_src=`echo $ngx_src | sed -e "s/\//$ngx_regex_dirsep/g"`
+  
+!         cat << END                                            >> $NGX_MAKEFILE
+  
+  $ngx_obj:	\$(ADDON_DEPS)$ngx_cont$ngx_src
+  	$ngx_cc$ngx_tab$ngx_objout$ngx_obj$ngx_tab$ngx_src$NGX_AUX
+  
+  END
+       done
+  
+  fi
+--- 354,374 ----
+  
+          ngx_src=`echo $ngx_src | sed -e "s/\//$ngx_regex_dirsep/g"`
+  
+! if [ "${ngx_src##*.}" == "cpp" ]; then
+!         cat << END >> $NGX_MAKEFILE
+! 
+! $ngx_obj:	\$(ADDON_DEPS)$ngx_cont$ngx_src
+! 	$ngx_cpp$ngx_tab$ngx_objout$ngx_obj$ngx_tab$ngx_src$NGX_AUX
+! 
+! END
+! else
+!         cat << END >> $NGX_MAKEFILE
+  
+  $ngx_obj:	\$(ADDON_DEPS)$ngx_cont$ngx_src
+  	$ngx_cc$ngx_tab$ngx_objout$ngx_obj$ngx_tab$ngx_src$NGX_AUX
+  
+  END
++ fi
+       done
+  
+  fi
